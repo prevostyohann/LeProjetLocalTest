@@ -1,0 +1,79 @@
+services:
+  backend:
+    container_name: back
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend
+    volumes:
+      - ./backend:/app/backend
+    ports:
+      - "8000:8000"
+    command: php -S 0.0.0.0:8000 -t public
+    networks: 
+      projettest:
+        aliases:
+          - testprojet
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    container_name: front
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend
+    volumes:
+      - ./frontend:/app/frontend
+    ports:
+      - "3000:3000"
+    command: npm start
+    networks: 
+      projettest:
+        aliases:
+          - testprojet
+
+  mysql:
+    image: mysql:latest
+    container_name: testprojet
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks: 
+      projettest:
+        aliases:
+          - testprojet
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: db_manager
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: myuser
+      PMA_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "8080:80"
+    networks: 
+      projettest:
+        aliases:
+          - testprojet
+
+volumes:
+  mysql-data:
+
+networks: 
+  projettest:
+    name: testmonprojet
+    driver: bridge
