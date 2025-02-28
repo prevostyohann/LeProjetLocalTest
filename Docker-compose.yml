@@ -17,6 +17,13 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/
+          target: /app/backend/
+          ignore:
+            - vendor/
 
   frontend:
     container_name: front
@@ -24,8 +31,8 @@ services:
       context: .
       dockerfile: Dockerfile
       target: frontend
-    volumes:
-      - ./frontend:/app/frontend
+    # volumes:
+    #   - ./frontend:/app/frontend
     ports:
       - "3000:3000"
     command: npm start
@@ -35,6 +42,13 @@ services:
       projettest:
         aliases:
           - testprojet
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/
+          target: /app/frontend/
+          ignore:
+            - node_modules/
 
   mysql:
     image: mysql:latest

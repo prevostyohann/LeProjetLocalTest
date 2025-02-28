@@ -18,14 +18,24 @@ const MyForm = ({ fields, onSubmit }) => {
     });
   };
 
+  const handleFileChange = (e) => {
+    const { name } = e.target;
+    setFormData({
+      ...formData,
+      [name]: e.target.files[0],
+    });
+  };
+
   const validate = () => {
     const newErrors = {};
     fields.forEach((field) => {
-      if (!formData[field.name]) {
+      if (field.required && !formData[field.name]) {
         newErrors[field.name] = `${field.label} is required`;
       } else if (field.type === 'email' && !/\S+@\S+\.\S+/.test(formData[field.name])) {
         newErrors[field.name] = 'Invalid email address';
-      }else if (field.name === 'comfirm-password' && formData['password'] !== formData['comfirm-password']) { newErrors[field.name] = 'Passwords do not match'; }
+      } else if (field.name === 'confirm-password' && formData['password'] !== formData['confirm-password']) {
+        newErrors[field.name] = 'Passwords do not match';
+      }
     });
     return newErrors;
   };
@@ -72,7 +82,6 @@ const MyForm = ({ fields, onSubmit }) => {
       <button type="submit">
         Submit
       </button>
-      
     </form>
   );
 };
