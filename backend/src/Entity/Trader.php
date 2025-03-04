@@ -53,6 +53,9 @@ class Trader implements PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
+    #[ORM\ManyToOne]
+    private ?SubCategory $SubCategory = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -208,6 +211,18 @@ class Trader implements PasswordAuthenticatedUserInterface
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getSubCategory(): ?SubCategory
+    {
+        return $this->SubCategory;
+    }
+
+    public function setSubCategory(?SubCategory $SubCategory): static
+    {
+        $this->SubCategory = $SubCategory;
 
         return $this;
     }
